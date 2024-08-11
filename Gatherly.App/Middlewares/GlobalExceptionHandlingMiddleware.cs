@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using System.Text.Json;
 
 namespace Gatherly.App.Middlewares
 {
@@ -22,6 +24,20 @@ namespace Gatherly.App.Middlewares
                 _logger.LogError(e, e.Message);
 
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+                ProblemDetails problem = new()
+                {
+                    Status = (int)HttpStatusCode.InternalServerError,
+                    Type = "Server error",
+                    Title = "Server error",
+                    Detail = "An internal server has occurred"
+                };
+
+                string json = JsonSerializer.Serialize(problem);
+
+                await context.Response.WriteAsync(json);
+
+                context.Response.ContentType = "application/json";
             }
         }
     }
