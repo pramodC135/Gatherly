@@ -1,4 +1,6 @@
-var builder = WebApplication.CreateBuilder(args);
+using Gatherly.App.Middlewares;
+
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
@@ -16,5 +18,20 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 
-app.Run();
+/*app.Use( async (context, next) => 
+{
+    try
+    {
+        await next(context);
+    }
+    catch
+    {
+        context.Response.StatusCode = 500;
+    }
+});*/
 
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+
+app.MapControllers();
+
+app.Run();
