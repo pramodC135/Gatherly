@@ -2,23 +2,20 @@
 
 namespace Gatherly.App.Middlewares
 {
-    public class GlobalExceptionHandlingMiddleware
+    public class GlobalExceptionHandlingMiddleware : IMiddleware
     {
-        private readonly RequestDelegate _next;
-
         private readonly ILogger _logger;
 
-        public GlobalExceptionHandlingMiddleware(RequestDelegate next, ILogger logger)
+        public GlobalExceptionHandlingMiddleware(ILogger<GlobalExceptionHandlingMiddleware> logger)
         {
-            _next = next;
             _logger = logger;
         }
 
-        public async Task InvokeAsync(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             try
             {
-                await _next(context);
+                await next(context);
             }
             catch (Exception e)
             {
